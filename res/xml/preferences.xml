@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="General">
+		<CheckBoxPreference
+			android:title="Disable GPS Warning"
+			android:summary="This will disable the warning displayed on app start up if GPS is off."
+			android:key="disableGPSWarning"
+			android:defaultValue="false"/>
+	</PreferenceCategory>
+</PreferenceScreen>

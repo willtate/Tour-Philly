@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Philadelpia Historical Tour</string>
+    <string name="location_view_button">Locations</string>
+    <string name="location_view_title">View All Historic Locations</string>
+    <string name="settings_title">Settings</string>
+    
+	<!--     Context Menu Strings -->
+    <string name="menu_settings">Settings</string>
+
+</resources>
