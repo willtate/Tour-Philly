@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -14,10 +15,10 @@ import android.util.Log;
 public class DbAdapter {
 	
 	public static final String KEY_ROWID = "_id";
-	public static final String KEY_LOC = "location";
-	public static final String KEY_DESC = "description";
-	public static final String KEY_LAT = "latitude";
-	public static final String KEY_LONG = "longitude";
+	public static final String KEY_TITLE = "title";
+	public static final String KEY_SNIPPET = "snippet";
+	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_LONGITUDE = "longitude";
 	
 	public static final String TAG = "Squidgle.Philly";
 	
@@ -26,18 +27,21 @@ public class DbAdapter {
     private static final int DATABASE_VERSION = 1;
     
     private static final String DATABASE_CREATE =
-            "create table notes (_id integer primary key autoincrement, "
-            + "location text not null, "
-            + "description text not null, "
-            + "latitude real not null, "
-            + "longitude real not null";
+            "create table locations (_id integer primary key autoincrement, "
+            + "title text not null, "
+            + "snippet text not null, "
+            + "latitude integer not null, "
+            + "longitude integer not null)";
         
         private static final String DATABASE_UPGRADE =
-        	"notes (_id integer primary key autoincrement, "
-        	+ "location text not null, "
-        	+ "description text not null, "
-        	+ "latitude real not null, "
-        	+ "longitude real not null";
+        	"locations (_id integer primary key autoincrement, "
+        	+ "title text not null, "
+        	+ "snippet text not null, "
+        	+ "latitude integer not null, "
+        	+ "longitude integer not null)";
+        
+    private static final String DATABASE_DROP = 
+    		"drop table if exists " + DATABASE_TABLE;
 	
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
@@ -76,6 +80,17 @@ public class DbAdapter {
         }
 		
 	}
+	
+	public void prepare() {
+    	mDb.beginTransaction();
+    	try {
+    		mDb.execSQL(DATABASE_DROP);
+    		mDb.execSQL(DATABASE_CREATE);
+    		mDb.setTransactionSuccessful();
+    	} finally {
+    		mDb.endTransaction();
+    	}
+    }
 	
 	public static List<String> GetColumns(SQLiteDatabase db, String tableName) {
         List<String> ar = null;
@@ -144,10 +159,10 @@ public class DbAdapter {
      * 
      * @return Cursor over all locations
      */
-    public Cursor fetchAllItems(String orderBy) {
+    public Cursor fetchAllItems() {
         return mDb.query(DATABASE_TABLE, new String[] {
-        		KEY_ROWID, KEY_LOC, KEY_DESC, KEY_LAT, KEY_LONG}, 
-                null, null, null, null, orderBy);
+        		KEY_ROWID, KEY_TITLE, KEY_SNIPPET, KEY_LATITUDE, KEY_LONGITUDE}, 
+                null, null, null, null, null);
     }
 
     /**
@@ -160,12 +175,30 @@ public class DbAdapter {
     public Cursor fetchItem(long rowId) throws SQLException {
 
         Cursor cursor = mDb.query(true, DATABASE_TABLE, new String[] {
-        		KEY_ROWID, KEY_LOC, KEY_DESC, KEY_LAT, KEY_LONG},
+        		KEY_ROWID, KEY_TITLE, KEY_SNIPPET, KEY_LATITUDE, KEY_LONGITUDE},
                 KEY_ROWID + "=" + rowId, 
                 null, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
         return cursor;
+    }
+    
+    /**
+     * Insert an item into the database
+     * @param title		Title of the location
+     * @param snippet	Description of the location	
+     * @param lat		Latitude of the location
+     * @param long		Longitude of the location
+     * @return			The _id value of the item in the database
+     */
+    
+    public long insert(String title, String snippet, int latitude, int longitude) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_TITLE, title);
+        initialValues.put(KEY_SNIPPET, snippet);
+        initialValues.put(KEY_LATITUDE, latitude);
+        initialValues.put(KEY_LONGITUDE, longitude);
+        return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 }

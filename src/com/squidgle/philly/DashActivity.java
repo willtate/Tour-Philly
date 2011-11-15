@@ -12,6 +12,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,6 +38,7 @@ import android.widget.Toast;
 
 public class DashActivity extends Activity implements LocationListener 
 {
+	public static final String TAG = "Squidgle-Philly";
 	//Menu Items
 	public static final int SETTINGS_ID = 1000;
 	//URL for Update
@@ -197,20 +201,27 @@ public class DashActivity extends Activity implements LocationListener
 		
 	}
 	
-	public class RestTask extends AsyncTask<String, Integer, String> {
+	/**
+	 * Start an AsyncTask to perform an HTTP GET to retrieve the JSON response from
+	 * the Squidgle REST server.
+	 * @author will
+	 *
+	 */
+	
+	public class RestTask extends AsyncTask<String, Void, Integer> {
 
 		@Override
-		protected String doInBackground(String... urls) 
+		protected Integer doInBackground(String... urls) 
 		{
 			StringBuilder builder = new StringBuilder();
 			HttpClient client = new DefaultHttpClient();
-			for (String url : urls) {
-			HttpGet httpGet = new HttpGet(url);
+			HttpGet httpGet = new HttpGet(urls[0]);
+			Integer retval = null;
 			try {
 				HttpResponse response = client.execute(httpGet);
 				StatusLine statusLine = response.getStatusLine();
 				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200) { //success!
+				if (statusCode == 200) {
 					HttpEntity entity = response.getEntity();
 					InputStream content = entity.getContent();
 					BufferedReader reader = new BufferedReader(
@@ -219,22 +230,47 @@ public class DashActivity extends Activity implements LocationListener
 					while ((line = reader.readLine()) != null) {
 						builder.append(line);
 					}
+					//crease a JSONArray from the response string
+					JSONArray jsonArray = new JSONArray(builder.toString());
+					retval = jsonArray.length();
+					//open the database
+					DbAdapter dbHelper = new DbAdapter(mContext);
+					dbHelper.open();
+					//drops the old table and creates a new one for entry
+					dbHelper.prepare();
+					//iterate through the JSONArray adding items to the database
+					for (int i = 0; i < jsonArray.length(); i++) {
+						Log.i(TAG, "Inserting item");
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
+						dbHelper.insert(jsonObject.getString("title"),
+							jsonObject.getString("snippet"),
+							jsonObject.getInt("lat"),
+							jsonObject.getInt("long"));
+					}
+					Log.i(TAG, "Finished, closing DB");
+					//always remember to clean up!
+					dbHelper.close();
 				} else {
-					Log.e("Philly", "Failed to download file");
+					Toast.makeText(mContext, R.string.refresh_error, Toast.LENGTH_LONG).show();
 				}
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Toast.makeText(mContext, R.string.refresh_error, Toast.LENGTH_LONG).show();
+				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Toast.makeText(mContext, R.string.refresh_error, Toast.LENGTH_LONG).show();
+				Log.e(TAG, e.getMessage());
+			} catch (JSONException e) {
+				Toast.makeText(mContext, R.string.json_parse_error, Toast.LENGTH_LONG).show();
 			}
-			}
-			return builder.toString();
+			return retval;
 		}
 
-		protected void onPostExecute(String result)
+		protected void onPostExecute(Integer entries)
 		{
 			progressDialog.dismiss();
-			Toast.makeText(mContext, result, Toast.LENGTH_LONG).show();
+			if(entries != null) {
+				Toast.makeText(mContext, "Successfully retrieved " + entries.intValue() + " entries!", Toast.LENGTH_SHORT).show();
+			}
 		}
 		
 		protected void onPreExecute()

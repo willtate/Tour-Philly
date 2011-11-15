@@ -26,6 +26,7 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050000;
+        public static final int json_parse_error=0x7f050007;
         /**      Dash Buttons 
          */
         public static final int location_view_button=0x7f050003;
@@ -33,6 +34,9 @@ public final class R {
         /**      Context Menu Strings 
          */
         public static final int menu_settings=0x7f050005;
+        /**      Error Messages 
+         */
+        public static final int refresh_error=0x7f050006;
         public static final int refresh_location_info=0x7f050004;
         public static final int settings_title=0x7f050002;
     }

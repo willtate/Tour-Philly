@@ -5,8 +5,10 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -68,10 +70,24 @@ public class LocationView extends MapActivity
 	 */
 	
 	private void createPoints() {
-		GeoPoint point = new GeoPoint(PHILLY_LAT ,PHILLY_LONG);
-		OverlayItem overlayitem = new OverlayItem(point, "Philadelphia", "City Hall");
-		mItemizedOverlay.addOverlay(overlayitem);
-		mapOverlays.add(mItemizedOverlay);
+		DbAdapter dbHelper = new DbAdapter(this);
+		dbHelper.open();
+		Cursor c = dbHelper.fetchAllItems();
+		c.moveToFirst();
+		while(c.isAfterLast() == false) {
+			String title = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_TITLE));
+			String snippet = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_SNIPPET));
+			int latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
+			int longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
+			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
+			GeoPoint point = new GeoPoint(latitude ,longitude);
+			OverlayItem overlayitem = new OverlayItem(point, title, snippet);
+			mItemizedOverlay.addOverlay(overlayitem);
+			mapOverlays.add(mItemizedOverlay);
+			c.moveToNext();
+		}
+		c.close();
+		dbHelper.close();
 	}
 	
 	@Override

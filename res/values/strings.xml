@@ -11,4 +11,8 @@
 	<!--     Context Menu Strings -->
     <string name="menu_settings">Settings</string>
 
+        
+	<!--     Error Messages -->
+	<string name="refresh_error">Failed to download update! Try again later</string>
+	<string name="json_parse_error">Failed to parse server response! Try again later</string>
 </resources>
