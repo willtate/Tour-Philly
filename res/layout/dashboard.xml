@@ -9,5 +9,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/location_view_button" />
+    
+    <Button
+        android:id="@+id/refreshInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh_location_info" />
 
 </LinearLayout>

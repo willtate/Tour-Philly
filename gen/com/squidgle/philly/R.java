@@ -15,9 +15,10 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int locationView=0x7f060001;
+        public static final int locationView=0x7f060002;
         public static final int locationViewButton=0x7f060000;
-        public static final int mapView=0x7f060002;
+        public static final int mapView=0x7f060003;
+        public static final int refreshInfoButton=0x7f060001;
     }
     public static final class layout {
         public static final int dashboard=0x7f030000;
@@ -25,12 +26,15 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050000;
-        public static final int location_view_button=0x7f050001;
-        public static final int location_view_title=0x7f050002;
+        /**      Dash Buttons 
+         */
+        public static final int location_view_button=0x7f050003;
+        public static final int location_view_title=0x7f050001;
         /**      Context Menu Strings 
          */
-        public static final int menu_settings=0x7f050004;
-        public static final int settings_title=0x7f050003;
+        public static final int menu_settings=0x7f050005;
+        public static final int refresh_location_info=0x7f050004;
+        public static final int settings_title=0x7f050002;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;
