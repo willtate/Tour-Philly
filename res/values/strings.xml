@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Philadelphia Historical Tour</string>
+    <string name="app_name">Discover Philly</string>
     <string name="location_view_title">View All Historic Locations</string>
     <string name="settings_title">Settings</string>
 	<!--     Dash Buttons -->

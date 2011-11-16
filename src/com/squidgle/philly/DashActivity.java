@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,6 +40,8 @@ import android.widget.Toast;
 public class DashActivity extends Activity implements LocationListener 
 {
 	public static final String TAG = "Squidgle-Philly";
+	//Dialogs
+	public static final int INITIAL_DIALOG = 2000;
 	//Menu Items
 	public static final int SETTINGS_ID = 1000;
 	//URL for Update
@@ -46,6 +49,7 @@ public class DashActivity extends Activity implements LocationListener
 	//Preference
 	SharedPreferences mPrefs;
 	Boolean mDisableGPSWarning;
+	Boolean mInitialLaunch;
 	Context mContext;
 	
 	ProgressDialog progressDialog;
@@ -65,6 +69,10 @@ public class DashActivity extends Activity implements LocationListener
         if(!mDisableGPSWarning) {
         	checkGPS();
         }
+        
+        if(mInitialLaunch) {
+        	showDialog(INITIAL_DIALOG);
+        }
     }
     
     /**
@@ -74,6 +82,13 @@ public class DashActivity extends Activity implements LocationListener
 	private void getPrefs() {
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mDisableGPSWarning = mPrefs.getBoolean("disableGPSWarning", false);
+		//is this our first time launching the application?
+		mInitialLaunch = mPrefs.getBoolean("initialLaunch", true);
+		if(mInitialLaunch) {
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putBoolean("initialLaunch", false);
+			editor.commit();
+		}
 	}
 
 	/**
@@ -130,8 +145,7 @@ public class DashActivity extends Activity implements LocationListener
     	refreshButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				RestTask task = new RestTask();
-				task.execute(UPDATE_URL);
+				refreshLocations();
 			}
 		});
     }
@@ -202,6 +216,49 @@ public class DashActivity extends Activity implements LocationListener
 	}
 	
 	/**
+	 * Display a dialog to the user on the first application launch.  This dialog
+	 * will tell them the application must pull down the location information to display
+	 * on the map overlay.
+	 * @return The AlertDialog to display
+	 */
+	
+	public Dialog initialDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Welcome to " + R.string.app_name + "!")
+				.setMessage("Since this is your first launch we need to download map information from our servers.  This may take a minute.")
+				.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	  refreshLocations();
+		           }
+		       });
+		return builder.create();
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch(id) {
+		case INITIAL_DIALOG:
+			dialog = initialDialog();
+			break;
+		default:
+			dialog = null;
+			break;
+		}
+		return dialog;
+	}
+	
+	/**
+	 * Start the AsyncTask to contact servers for location information
+	 */
+	
+	public void refreshLocations() {
+		RestTask task = new RestTask();
+		task.execute(UPDATE_URL);
+	}
+	
+	/**
 	 * Start an AsyncTask to perform an HTTP GET to retrieve the JSON response from
 	 * the Squidgle REST server.
 	 * @author will
@@ -210,6 +267,10 @@ public class DashActivity extends Activity implements LocationListener
 	
 	public class RestTask extends AsyncTask<String, Void, Integer> {
 
+		/**
+		 * The meat of the AsyncTask.  This will get a JSON response from the server, parse it, and input it
+		 * into a local database for faster querying later.
+		 */
 		@Override
 		protected Integer doInBackground(String... urls) 
 		{
@@ -264,7 +325,9 @@ public class DashActivity extends Activity implements LocationListener
 			}
 			return retval;
 		}
-
+		/**
+		 * Dismiss the progress dialog as we've now finished the download
+		 */
 		protected void onPostExecute(Integer entries)
 		{
 			progressDialog.dismiss();
@@ -272,7 +335,9 @@ public class DashActivity extends Activity implements LocationListener
 				Toast.makeText(mContext, "Successfully retrieved " + entries.intValue() + " entries!", Toast.LENGTH_SHORT).show();
 			}
 		}
-		
+		/**
+		 * Display an infinite progress dialog once we start the location download
+		 */
 		protected void onPreExecute()
 		{
 			progressDialog = ProgressDialog.show(mContext, "", "Refreshing location database...");
