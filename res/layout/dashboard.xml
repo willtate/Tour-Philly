@@ -3,17 +3,29 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/locationViewButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/location_view_button" />
     
-    <Button
-        android:id="@+id/refreshInfoButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/refresh_location_info" />
-
+        android:layout_weight="1">
+        
+    </LinearLayout>
+    
+    <LinearLayout style="@style/DashButtonRow">"
+        
+   		<Button style="@style/DashButton"
+        	android:id="@+id/viewMapButton"
+        	android:text="@string/location_view_button" />
+    
+    	<Button style="@style/DashButton"
+        	android:id="@+id/refreshInfoButton"
+        	android:text="@string/refresh_location_info" />
+	
+    </LinearLayout>
+    
+	<LinearLayout style="@style/DashButtonRow">
+	    <Button style="@style/DashButton"
+	        android:id="@+id/locationListButton"
+	        android:text="@string/location_list_button" />"
+	</LinearLayout>
 </LinearLayout>

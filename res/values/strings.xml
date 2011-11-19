@@ -5,8 +5,9 @@
     <string name="location_view_title">View All Historic Locations</string>
     <string name="settings_title">Settings</string>
 	<!--     Dash Buttons -->
-	<string name="location_view_button">Locations</string>
+	<string name="location_view_button">View Map</string>
 	<string name="refresh_location_info">Refresh</string>
+	<string name="location_list_button">Location List</string>
     
 	<!--     Context Menu Strings -->
     <string name="menu_settings">Settings</string>

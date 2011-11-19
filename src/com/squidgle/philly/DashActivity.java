@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -79,7 +80,8 @@ public class DashActivity extends Activity implements LocationListener
      * Get any Preferences that may be relevant to this Activity
      */
     
-	private void getPrefs() {
+	private void getPrefs() 
+	{
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mDisableGPSWarning = mPrefs.getBoolean("disableGPSWarning", false);
 		//is this our first time launching the application?
@@ -133,11 +135,11 @@ public class DashActivity extends Activity implements LocationListener
     
     private void dashButtonListeners() 
     {
-    	Button locationView = (Button) findViewById(R.id.locationViewButton);
-    	locationView.setOnClickListener(new View.OnClickListener() {
+    	Button viewMapButton = (Button) findViewById(R.id.viewMapButton);
+    	viewMapButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startLocationView();
+				startMapView();
 			}
 		});
     	
@@ -148,19 +150,37 @@ public class DashActivity extends Activity implements LocationListener
 				refreshLocations();
 			}
 		});
+    	
+    	Button locationListButton = (Button) findViewById(R.id.locationListButton);
+    	locationListButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startLocationList();
+			}
+		});
     }
     
     /**
-     * Start the Activity to view all locations
+     * Start the ListActivity to view a list of the locations
      */
     
-    private void startLocationView() 
+    private void startLocationList()
+    {
+    	startActivity(new Intent(this, LocationListActivity.class));
+    }
+    
+    /**
+     * Start the Activity to view locations on the map
+     */
+    
+    private void startMapView() 
     {
     	startActivity(new Intent(this, LocationView.class));
     }
     
     @Override
-   	public boolean onCreateOptionsMenu(Menu menu) {
+   	public boolean onCreateOptionsMenu(Menu menu) 
+    {
    		super.onCreateOptionsMenu(menu);
    		menu.add(0, SETTINGS_ID, 0, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_manage);
    		return true;
@@ -172,7 +192,8 @@ public class DashActivity extends Activity implements LocationListener
      */
     
     @Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onMenuItemSelected(int featureId, MenuItem item)
+    {
     	switch(item.getItemId()) {
         case SETTINGS_ID:
         	launchSettings();
@@ -222,9 +243,11 @@ public class DashActivity extends Activity implements LocationListener
 	 * @return The AlertDialog to display
 	 */
 	
-	public Dialog initialDialog() {
+	public Dialog initialDialog() 
+	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Welcome to " + R.string.app_name + "!")
+		Resources resource = this.getResources();
+		builder.setTitle("Welcome to " + resource.getString(R.string.app_name) + "!")
 				.setMessage("Since this is your first launch we need to download map information from our servers.  This may take a minute.")
 				.setCancelable(false)
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -236,7 +259,8 @@ public class DashActivity extends Activity implements LocationListener
 	}
 	
 	@Override
-	protected Dialog onCreateDialog(int id) {
+	protected Dialog onCreateDialog(int id) 
+	{
 		Dialog dialog;
 		switch(id) {
 		case INITIAL_DIALOG:
@@ -253,7 +277,8 @@ public class DashActivity extends Activity implements LocationListener
 	 * Start the AsyncTask to contact servers for location information
 	 */
 	
-	public void refreshLocations() {
+	public void refreshLocations() 
+	{
 		RestTask task = new RestTask();
 		task.execute(UPDATE_URL);
 	}
@@ -265,7 +290,8 @@ public class DashActivity extends Activity implements LocationListener
 	 *
 	 */
 	
-	public class RestTask extends AsyncTask<String, Void, Integer> {
+	public class RestTask extends AsyncTask<String, Void, Integer> 
+	{
 
 		/**
 		 * The meat of the AsyncTask.  This will get a JSON response from the server, parse it, and input it

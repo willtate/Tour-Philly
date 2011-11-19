@@ -22,8 +22,8 @@ import com.google.android.maps.OverlayItem;
 
 public class LocationView extends MapActivity 
 {
-	static final int PHILLY_LAT = 39952335;
-	static final int PHILLY_LONG = -75163789;
+	static final int PHILLY_LAT = 39952450;
+	static final int PHILLY_LONG = -75163526;
 	static final int CITY_ZOOM_LEVEL = 14;
 	MapView mMapView;
 	
@@ -59,6 +59,7 @@ public class LocationView extends MapActivity
 
 		MapController mapController = mMapView.getController();
 		mapController.setZoom(CITY_ZOOM_LEVEL);
+		mapController.setCenter(new GeoPoint(PHILLY_LAT, PHILLY_LONG));
 		
 		mapOverlays = mMapView.getOverlays();
 		mItemizedOverlay = new LocationOverlay(this.getResources().getDrawable(R.drawable.androidmarker));
