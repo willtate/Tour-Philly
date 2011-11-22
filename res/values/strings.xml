@@ -9,9 +9,11 @@
 	<string name="refresh_location_info">Refresh</string>
 	<string name="location_list_button">Location List</string>
     
-	<!--     Context Menu Strings -->
+	<!--     Options Menu Strings -->
     <string name="menu_settings">Settings</string>
-
+    <string name="menu_sort">Sort</string>
+    <string name="menu_title_desc">Title Descending</string>
+    <string name="menu_title_asc">Title Ascending</string>
         
 	<!--     Error Messages -->
 	<string name="refresh_error">Failed to download update! Try again later</string>

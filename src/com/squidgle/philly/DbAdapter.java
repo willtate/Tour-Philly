@@ -20,6 +20,9 @@ public class DbAdapter {
 	public static final String KEY_LATITUDE = "latitude";
 	public static final String KEY_LONGITUDE = "longitude";
 	
+	public static final String TITLE_DESC = DbAdapter.KEY_TITLE + " DESC";
+	public static final String TITLE_ASC = DbAdapter.KEY_TITLE + " ASC";
+	
 	public static final String TAG = "Squidgle.Philly";
 	
     private static final String DATABASE_NAME = "data";
@@ -47,20 +50,24 @@ public class DbAdapter {
 	private SQLiteDatabase mDb;
 	private final Context mCtx;
 	
-	private static class DatabaseHelper extends SQLiteOpenHelper {
+	private static class DatabaseHelper extends SQLiteOpenHelper 
+	{
 
-        DatabaseHelper(Context context) {
+        DatabaseHelper(Context context) 
+        {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
-        public void onCreate(SQLiteDatabase db) {
+        public void onCreate(SQLiteDatabase db) 
+        {
 
             db.execSQL(DATABASE_CREATE);
         }
         
         @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
+        {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
             
             db.beginTransaction();
@@ -81,7 +88,8 @@ public class DbAdapter {
 		
 	}
 	
-	public void prepare() {
+	public void prepare()
+	{
     	mDb.beginTransaction();
     	try {
     		mDb.execSQL(DATABASE_DROP);
@@ -92,7 +100,8 @@ public class DbAdapter {
     	}
     }
 	
-	public static List<String> GetColumns(SQLiteDatabase db, String tableName) {
+	public static List<String> GetColumns(SQLiteDatabase db, String tableName) 
+	{
         List<String> ar = null;
         Cursor c = null;
         try {
@@ -110,7 +119,8 @@ public class DbAdapter {
         return ar;
     }
 
-    public static String join(List<String> list, String delim) {
+    public static String join(List<String> list, String delim) 
+    {
         StringBuilder buf = new StringBuilder();
         int num = list.size();
         for (int i = 0; i < num; i++) {
@@ -127,7 +137,8 @@ public class DbAdapter {
      * 
      * @param ctx the Context within which to work
      */
-    public DbAdapter(Context ctx) {
+    public DbAdapter(Context ctx) 
+    {
         this.mCtx = ctx;
     }
     
@@ -150,7 +161,8 @@ public class DbAdapter {
      * Close the location database.
      */
 
-    public void close() {
+    public void close() 
+    {
         mDbHelper.close();
     }
     
@@ -159,10 +171,11 @@ public class DbAdapter {
      * 
      * @return Cursor over all locations
      */
-    public Cursor fetchAllItems() {
+    public Cursor fetchAllItems(String sortOrder) 
+    {
         return mDb.query(DATABASE_TABLE, new String[] {
         		KEY_ROWID, KEY_TITLE, KEY_SNIPPET, KEY_LATITUDE, KEY_LONGITUDE}, 
-                null, null, null, null, null);
+                null, null, null, null, sortOrder);
     }
 
     /**
@@ -172,7 +185,8 @@ public class DbAdapter {
      * @return Cursor positioned to matching note, if found
      * @throws SQLException if note could not be found/retrieved
      */
-    public Cursor fetchItem(long rowId) throws SQLException {
+    public Cursor fetchItem(long rowId) throws SQLException 
+    {
 
         Cursor cursor = mDb.query(true, DATABASE_TABLE, new String[] {
         		KEY_ROWID, KEY_TITLE, KEY_SNIPPET, KEY_LATITUDE, KEY_LONGITUDE},
@@ -193,7 +207,8 @@ public class DbAdapter {
      * @return			The _id value of the item in the database
      */
     
-    public long insert(String title, String snippet, int latitude, int longitude) {
+    public long insert(String title, String snippet, int latitude, int longitude) 
+    {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE, title);
         initialValues.put(KEY_SNIPPET, snippet);

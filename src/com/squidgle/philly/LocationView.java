@@ -42,7 +42,11 @@ public class LocationView extends MapActivity
 		//grab any extras
 		if (savedInstanceState == null) {
 			extras = getIntent().getExtras();
-			mRowId = extras.getLong(DbAdapter.KEY_ROWID);
+			if (extras == null) {
+				mRowId = null;
+			} else {
+				mRowId = extras.getLong(DbAdapter.KEY_ROWID);
+			}
 		} else {
 			mRowId = savedInstanceState.getLong(DbAdapter.KEY_ROWID);
 		}
@@ -67,7 +71,7 @@ public class LocationView extends MapActivity
 	private void initMap() {
 		mMapView = (MapView) findViewById(R.id.mapView);
 		mMapView.setBuiltInZoomControls(true);
-
+		//Sets an initial zoom on City Hall
 		MapController mapController = mMapView.getController();
 		mapController.setZoom(CITY_ZOOM_LEVEL);
 		mapController.setCenter(new GeoPoint(PHILLY_LAT, PHILLY_LONG));
@@ -84,11 +88,14 @@ public class LocationView extends MapActivity
 	private void createPoints() {
 		DbAdapter dbHelper = new DbAdapter(this);
 		dbHelper.open();
+		GeoPoint point;
+		OverlayItem overlayitem;
 		Cursor c;
 		String title, snippet;
 		int latitude = 0, longitude = 0;
+		//If a single item ID was passed in we display only that item, otherwise display all items
 		if(mRowId == null) {
-			c = dbHelper.fetchAllItems();
+			c = dbHelper.fetchAllItems(null);
 		} else {
 			c = dbHelper.fetchItem(mRowId);
 		}
@@ -99,8 +106,8 @@ public class LocationView extends MapActivity
 			latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
 			longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
 			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
-			GeoPoint point = new GeoPoint(latitude ,longitude);
-			OverlayItem overlayitem = new OverlayItem(point, title, snippet);
+			point = new GeoPoint(latitude ,longitude);
+			overlayitem = new OverlayItem(point, title, snippet);
 			mItemizedOverlay.addOverlay(overlayitem);
 			mapOverlays.add(mItemizedOverlay);
 			c.moveToNext();
