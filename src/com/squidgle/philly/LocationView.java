@@ -25,18 +25,29 @@ public class LocationView extends MapActivity
 	static final int PHILLY_LAT = 39952450;
 	static final int PHILLY_LONG = -75163526;
 	static final int CITY_ZOOM_LEVEL = 14;
-	MapView mMapView;
+	static final int ITEM_ZOOM_LEVEL = 16;
+	private MapView mMapView;
 	
-	List<Overlay> mapOverlays;
-	LocationOverlay mItemizedOverlay;
+	private List<Overlay> mapOverlays;
+	private LocationOverlay mItemizedOverlay;
+	
+	private Long mRowId;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.location_view);
+		Bundle extras;
+		//grab any extras
+		if (savedInstanceState == null) {
+			extras = getIntent().getExtras();
+			mRowId = extras.getLong(DbAdapter.KEY_ROWID);
+		} else {
+			mRowId = savedInstanceState.getLong(DbAdapter.KEY_ROWID);
+		}
 		initMap();
-		//create point for central hall
+		//create points
 		createPoints();
 		//add users current location
 		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mMapView);
@@ -73,13 +84,20 @@ public class LocationView extends MapActivity
 	private void createPoints() {
 		DbAdapter dbHelper = new DbAdapter(this);
 		dbHelper.open();
-		Cursor c = dbHelper.fetchAllItems();
+		Cursor c;
+		String title, snippet;
+		int latitude = 0, longitude = 0;
+		if(mRowId == null) {
+			c = dbHelper.fetchAllItems();
+		} else {
+			c = dbHelper.fetchItem(mRowId);
+		}
 		c.moveToFirst();
 		while(c.isAfterLast() == false) {
-			String title = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_TITLE));
-			String snippet = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_SNIPPET));
-			int latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
-			int longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
+			title = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_TITLE));
+			snippet = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_SNIPPET));
+			latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
+			longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
 			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
 			GeoPoint point = new GeoPoint(latitude ,longitude);
 			OverlayItem overlayitem = new OverlayItem(point, title, snippet);
@@ -89,6 +107,14 @@ public class LocationView extends MapActivity
 		}
 		c.close();
 		dbHelper.close();
+		
+		//if item is a single point, center and zoom to it
+		if(mRowId != null) {
+			MapController mapController = mMapView.getController();
+			mapController.setCenter(new GeoPoint(latitude, longitude));
+			mapController.setZoom(ITEM_ZOOM_LEVEL);
+		}
+		
 	}
 	
 	@Override
