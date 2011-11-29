@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -107,7 +106,7 @@ public class LocationMapActivity extends MapActivity
 			snippet = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_SNIPPET));
 			latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
 			longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
-			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
+//			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
 			point = new GeoPoint(latitude ,longitude);
 			overlayitem = new OverlayItem(point, title, snippet);
 			mItemizedOverlay.addOverlay(overlayitem);

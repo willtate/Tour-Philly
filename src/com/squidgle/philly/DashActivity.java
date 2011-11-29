@@ -316,7 +316,7 @@ public class DashActivity extends Activity implements LocationListener
 					dbHelper.prepare();
 					//iterate through the JSONArray adding items to the database
 					for (int i = 0; i < jsonArray.length(); i++) {
-						Log.i(TAG, "Inserting item");
+//						Log.i(TAG, "Inserting item");
 						JSONObject jsonObject = jsonArray.getJSONObject(i);
 						dbHelper.insert(jsonObject.getString("title"),
 							jsonObject.getString("snippet"),

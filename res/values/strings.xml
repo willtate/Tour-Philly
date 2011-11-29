@@ -6,9 +6,7 @@
     <string name="settings_title">Settings</string>
     <string name="new_fragment">New Fragment</string>
 	<!--     Dash Buttons -->
-	<string name="location_view_button">View Map</string>
-	<string name="refresh_location_info">Refresh</string>
-	<string name="location_list_button">Location List</string>
+	<string name="refresh_location_info">Refresh Location List</string>
     
 	<!--     Options Menu Strings -->
     <string name="menu_settings">Settings</string>
