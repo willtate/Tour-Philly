@@ -28,6 +28,8 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -134,15 +136,7 @@ public class DashActivity extends Activity implements LocationListener
      */
     
     private void dashButtonListeners() 
-    {
-    	Button viewMapButton = (Button) findViewById(R.id.viewMapButton);
-    	viewMapButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startMapView();
-			}
-		});
-    	
+    {    	
     	Button refreshButton = (Button) findViewById(R.id.refreshInfoButton);
     	refreshButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -150,32 +144,6 @@ public class DashActivity extends Activity implements LocationListener
 				refreshLocations();
 			}
 		});
-    	
-    	Button locationListButton = (Button) findViewById(R.id.locationListButton);
-    	locationListButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startLocationList();
-			}
-		});
-    }
-    
-    /**
-     * Start the ListActivity to view a list of the locations
-     */
-    
-    private void startLocationList()
-    {
-    	startActivity(new Intent(this, LocationListActivity.class));
-    }
-    
-    /**
-     * Start the Activity to view locations on the map
-     */
-    
-    private void startMapView() 
-    {
-    	startActivity(new Intent(this, LocationView.class));
     }
     
     @Override
@@ -279,8 +247,29 @@ public class DashActivity extends Activity implements LocationListener
 	
 	public void refreshLocations() 
 	{
+		if(!isData()) {
+			Toast.makeText(this, "Unable to contact server! No data connection available", Toast.LENGTH_LONG).show();
+		}
 		RestTask task = new RestTask();
 		task.execute(UPDATE_URL);
+	}
+	
+	/**
+	 * 
+	 */
+
+	public boolean isData()
+	{
+		ConnectivityManager cManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		if(cManager != null) {
+			NetworkInfo[] netInfo = cManager.getAllNetworkInfo();
+			for(int i = 0; i < netInfo.length; i++) {
+				if(netInfo[i].getState() == NetworkInfo.State.CONNECTED) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**

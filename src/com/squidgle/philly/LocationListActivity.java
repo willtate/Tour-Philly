@@ -80,7 +80,7 @@ public class LocationListActivity extends ListActivity
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		super.onListItemClick(l, v, position, id);
-		Intent i = new Intent(this, LocationView.class);
+		Intent i = new Intent(this, LocationMapActivity.class);
 		i.putExtra(DbAdapter.KEY_ROWID, id);
 		startActivity(i);
 	}

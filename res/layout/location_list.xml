@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:id="@+id/listRoot">
+    <LinearLayout 
+		android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
     
     	<ListView android:id="@id/android:list"
 			android:layout_width="fill_parent"
@@ -22,4 +28,17 @@
     		android:shadowDy="1.0"
     		android:shadowRadius="1.0"/>
   
+	</LinearLayout>
+	<LinearLayout xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	    android:layout_height="wrap_content"
+	    android:layout_width="fill_parent"
+	    android:orientation="vertical">"
+    	<com.google.ads.AdView android:id="@+id/adViewList"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			ads:adUnitId="a14ecd38c27d213"
+			ads:adSize="BANNER"
+			ads:testDevices="TEST_EMULATOR,A79CCAB49ED571A724BB922CB21158F5"
+			ads:loadAdOnCreate="true"/>
+	</LinearLayout>
 </LinearLayout>

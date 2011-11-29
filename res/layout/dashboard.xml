@@ -8,24 +8,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-        
     </LinearLayout>
     
     <LinearLayout style="@style/DashButtonRow">"
-        
-   		<Button style="@style/DashButton"
-        	android:id="@+id/viewMapButton"
-        	android:text="@string/location_view_button" />
-    
     	<Button style="@style/DashButton"
         	android:id="@+id/refreshInfoButton"
         	android:text="@string/refresh_location_info" />
-	
     </LinearLayout>
     
-	<LinearLayout style="@style/DashButtonRow">
-	    <Button style="@style/DashButton"
-	        android:id="@+id/locationListButton"
-	        android:text="@string/location_list_button" />"
+	<LinearLayout xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
+	    <com.google.ads.AdView android:id="@+id/adViewDash"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			ads:adUnitId="a14ecd38c27d213"
+			ads:adSize="BANNER"
+			ads:testDevices="TEST_EMULATOR,A79CCAB49ED571A724BB922CB21158F5"
+			ads:loadAdOnCreate="true" />
 	</LinearLayout>
 </LinearLayout>
