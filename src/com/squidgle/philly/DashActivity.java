@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
@@ -43,6 +44,7 @@ import android.widget.Toast;
 public class DashActivity extends Activity implements LocationListener 
 {
 	public static final String TAG = "Squidgle-Philly";
+	public static final String REFRESH_IN_PROGRESS = "refreshInProgress";
 	//Dialogs
 	public static final int INITIAL_DIALOG = 2000;
 	//Menu Items
@@ -50,12 +52,11 @@ public class DashActivity extends Activity implements LocationListener
 	//URL for Update
 	public static final String UPDATE_URL = "http://www.squidgle.com/api";
 	//Preference
-	SharedPreferences mPrefs;
-	Boolean mDisableGPSWarning;
-	Boolean mInitialLaunch;
-	Context mContext;
-	
-	ProgressDialog progressDialog;
+	private SharedPreferences mPrefs;
+	private Boolean mDisableGPSWarning;
+	private Boolean mInitialLaunch;
+	private Context mContext;
+	private RestTask mTask;
 	
     /** Called when the activity is first created. */
     @Override
@@ -77,8 +78,8 @@ public class DashActivity extends Activity implements LocationListener
         	showDialog(INITIAL_DIALOG);
         }
     }
-    
-    /**
+
+	/**
      * Get any Preferences that may be relevant to this Activity
      */
     
@@ -250,8 +251,8 @@ public class DashActivity extends Activity implements LocationListener
 		if(!isData()) {
 			Toast.makeText(this, "Unable to contact server! No data connection available", Toast.LENGTH_LONG).show();
 		}
-		RestTask task = new RestTask();
-		task.execute(UPDATE_URL);
+		mTask = new RestTask();
+		mTask.execute(UPDATE_URL);
 	}
 	
 	/**
@@ -272,16 +273,50 @@ public class DashActivity extends Activity implements LocationListener
 		return false;
 	}
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) 
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		restoreTask(savedInstanceState);
+	}
+	
+	private void restoreTask(Bundle savedInstanceState)
+	{
+		if(savedInstanceState.getBoolean(REFRESH_IN_PROGRESS)) {
+			refreshLocations();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) 
+	{
+		super.onSaveInstanceState(outState);
+		saveTask(outState);
+	}
+	
+	private void saveTask(Bundle outState)
+	{
+		final RestTask task = mTask; 
+		if(task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
+			task.cancel(true);
+			outState.putBoolean(REFRESH_IN_PROGRESS, true);
+		}
+		mTask = null;
+	}
+
+
+
+
 	/**
 	 * Start an AsyncTask to perform an HTTP GET to retrieve the JSON response from
 	 * the Squidgle REST server.
 	 * @author will
 	 *
 	 */
-	
+
 	public class RestTask extends AsyncTask<String, Void, Integer> 
 	{
-
+		private ProgressDialog mProgressDialog;
 		/**
 		 * The meat of the AsyncTask.  This will get a JSON response from the server, parse it, and input it
 		 * into a local database for faster querying later.
@@ -343,7 +378,9 @@ public class DashActivity extends Activity implements LocationListener
 		 */
 		protected void onPostExecute(Integer entries)
 		{
-			progressDialog.dismiss();
+			if(mProgressDialog.isShowing()) {
+				mProgressDialog.dismiss();
+			}
 			if(entries != null) {
 				Toast.makeText(mContext, "Successfully retrieved " + entries.intValue() + " entries!", Toast.LENGTH_SHORT).show();
 			}
@@ -353,7 +390,7 @@ public class DashActivity extends Activity implements LocationListener
 		 */
 		protected void onPreExecute()
 		{
-			progressDialog = ProgressDialog.show(mContext, "", "Refreshing location database...");
+			mProgressDialog = ProgressDialog.show(mContext, "", "Refreshing location database...");
 		}
 	}
 }

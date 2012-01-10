@@ -1,6 +1,7 @@
 package com.squidgle.philly.test;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
@@ -11,6 +12,7 @@ public class DashActivityTest extends
 {
 	private Activity mActivity;
 	private Button mRefreshButton;
+	private Instrumentation mInstrumentation;
 
 	public DashActivityTest() {
 		super("com.squidgle.philly", DashActivity.class);
@@ -23,13 +25,14 @@ public class DashActivityTest extends
 		
 		setActivityInitialTouchMode(false);
 		
+		mInstrumentation = getInstrumentation();		
 		mActivity = getActivity();
 		mRefreshButton = (Button) mActivity.findViewById(com.squidgle.philly.R.id.refreshInfoButton);
 	}
 
 	public void testPreConditions() 
 	{
-		assertTrue(mActivity != null);
+		assertNotNull(mActivity);
 		assertTrue(mRefreshButton.isClickable());
 		assertTrue(mRefreshButton.isEnabled());
 		
@@ -42,5 +45,6 @@ public class DashActivityTest extends
 				mRefreshButton.performClick();
 			}
 		});
+		mInstrumentation.waitForIdleSync();
 	}	
 }

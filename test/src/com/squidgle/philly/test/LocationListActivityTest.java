@@ -35,14 +35,20 @@ public class LocationListActivityTest extends
 		mListAdapter = (LocationAdapter) mList.getAdapter();
 	}
 	
+	/**
+	 * Test some big picture stuff
+	 */
 	public void testPreConditions() 
 	{
 		assertTrue(mList.isClickable());
 		assertTrue(mList.isEnabled());
-		assertTrue(mList.getEmptyView() != null);
-		assertTrue(mListAdapter != null);
+		assertNotNull(mList.getEmptyView());
+		assertNotNull(mListAdapter);
 	}
 	
+	/**
+	 * Verify the List UI is scrollable and such
+	 */
 	public void testListUI()
 	{
 		mActivity.runOnUiThread(new Runnable() {
@@ -52,11 +58,11 @@ public class LocationListActivityTest extends
 			}
 		});
 		
-		sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
 	    for (int i = 1; i <= LIST_TEST_POSITION; i++) {
-	      sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
-	    } // end of for loop
-
-	    sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+	    	sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
+	    }
+	    
+	    assertTrue(mList.getItemAtPosition(LIST_TEST_POSITION).equals(mList.getSelectedItem()));
+	    
 	}	
 }
