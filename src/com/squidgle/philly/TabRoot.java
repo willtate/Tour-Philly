@@ -11,11 +11,13 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 @SuppressWarnings("deprecation")
-public class TabRoot extends TabActivity {
+public class TabRoot extends TabActivity 
+{
 	
 	TabHost mTabHost;
 	
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) 
+	{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.main);
 
@@ -36,7 +38,8 @@ public class TabRoot extends TabActivity {
 	 * @param i	The intent with the Activity to launch for that tab
 	 */
 	
-	private void setupTab(final String tag, final Intent intent) {
+	private void setupTab(final String tag, final Intent intent) 
+	{
 		View tabview = createTabView(mTabHost.getContext(), tag);
 	    TabSpec setContent = mTabHost.newTabSpec(tag).setIndicator(tabview).setContent(intent);
 		mTabHost.addTab(setContent);
@@ -49,7 +52,8 @@ public class TabRoot extends TabActivity {
 	 * @return The inflated view for the TOab
 	 */
 	
-	private static View createTabView(final Context context, final String text) {
+	private static View createTabView(final Context context, final String text) 
+	{
 		View view = LayoutInflater.from(context).inflate(R.layout.tab, null);
 		TextView tv = (TextView) view.findViewById(R.id.tabsText);
 		tv.setText(text);

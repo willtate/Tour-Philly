@@ -3,14 +3,15 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:orientation="vertical"
-    android:id="@+id/listRoot">
+    android:id="@+id/listRoot"
+    android:baselineAligned="false">
     <LinearLayout 
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="0dip"
 		android:layout_weight="1">
     
-    	<ListView android:id="@id/android:list"
+    	<ListView android:id="@+id/android:list"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:divider="#00FFFFFF"
@@ -20,7 +21,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:text="No Items"
+			android:text="@string/list_empty"
  			android:textSize="20sp"
  			android:textStyle="bold"
 			android:shadowColor="#90909090"

@@ -81,7 +81,8 @@ public class LocationListActivity extends ListActivity
 	{
 		super.onListItemClick(l, v, position, id);
 		Intent i = new Intent(this, LocationMapActivity.class);
-		i.putExtra(DbAdapter.KEY_ROWID, id);
+		Long rowId = id;
+		i.putExtra(DbAdapter.KEY_ROWID, rowId);
 		startActivity(i);
 	}
 

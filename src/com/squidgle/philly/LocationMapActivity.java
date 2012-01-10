@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -27,9 +28,8 @@ public class LocationMapActivity extends MapActivity
 	static final int ITEM_ZOOM_LEVEL = 16;
 	private MapView mMapView;
 	
-	private List<Overlay> mapOverlays;
+	private List<Overlay> mMapOverlays;
 	private LocationOverlay mItemizedOverlay;
-	
 	private Long mRowId;
 	
 	@Override
@@ -44,10 +44,10 @@ public class LocationMapActivity extends MapActivity
 			if (extras == null) {
 				mRowId = null;
 			} else {
-				mRowId = extras.getLong(DbAdapter.KEY_ROWID);
+				mRowId = (Long) extras.getSerializable(DbAdapter.KEY_ROWID);
 			}
 		} else {
-			mRowId = savedInstanceState.getLong(DbAdapter.KEY_ROWID);
+			mRowId = (Long) savedInstanceState.getSerializable(DbAdapter.KEY_ROWID);
 		}
 		initMap();
 		//create points
@@ -56,10 +56,10 @@ public class LocationMapActivity extends MapActivity
 		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mMapView);
 		//notify user is they have location services disabled
 		if(!myLocationOverlay.enableMyLocation()) {
-			Toast.makeText(this, "Unable to get users location", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Unable to get user's location", Toast.LENGTH_LONG).show();
 		}
 		
-	    mapOverlays.add(myLocationOverlay);
+	    mMapOverlays.add(myLocationOverlay);
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class LocationMapActivity extends MapActivity
 		mapController.setZoom(CITY_ZOOM_LEVEL);
 		mapController.setCenter(new GeoPoint(PHILLY_LAT, PHILLY_LONG));
 		
-		mapOverlays = mMapView.getOverlays();
+		mMapOverlays = mMapView.getOverlays();
 		mItemizedOverlay = new LocationOverlay(this.getResources().getDrawable(R.drawable.androidmarker));
 	}
 	
@@ -97,20 +97,22 @@ public class LocationMapActivity extends MapActivity
 		//If a single item ID was passed in we display only that item, otherwise display all items
 		if(mRowId == null) {
 			c = dbHelper.fetchAllItems(null);
+			Log.d("Philly", "Number of Overlays: " + c.getCount());
 		} else {
 			c = dbHelper.fetchItem(mRowId);
+			Log.d("Philly", "Overlay from row: " + Long.toString(mRowId));
 		}
 		c.moveToFirst();
+		
 		while(c.isAfterLast() == false) {
 			title = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_TITLE));
 			snippet = c.getString(c.getColumnIndexOrThrow(DbAdapter.KEY_SNIPPET));
 			latitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LATITUDE));
 			longitude = c.getInt(c.getColumnIndexOrThrow(DbAdapter.KEY_LONGITUDE));
-//			Log.i(DashActivity.TAG, "Adding Item: " + title + " lat:"+latitude+" long:"+longitude);
 			point = new GeoPoint(latitude ,longitude);
 			overlayitem = new OverlayItem(point, title, snippet);
 			mItemizedOverlay.addOverlay(overlayitem);
-			mapOverlays.add(mItemizedOverlay);
+			mMapOverlays.add(mItemizedOverlay);
 			c.moveToNext();
 		}
 		c.close();
@@ -179,5 +181,38 @@ public class LocationMapActivity extends MapActivity
 			alert.show();
 			return true;
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(DbAdapter.KEY_LATITUDE, mMapView.getMapCenter().getLatitudeE6());
+		outState.putInt(DbAdapter.KEY_LONGITUDE, mMapView.getMapCenter().getLongitudeE6());
+		outState.putInt("zoom", mMapView.getZoomLevel());
+		outState.putSerializable(DbAdapter.KEY_ROWID, mRowId);
+	}
+	
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		MapController mapController = mMapView.getController();
+		mapController.setCenter(
+				new GeoPoint(
+						savedInstanceState.getInt(DbAdapter.KEY_LATITUDE), 
+						savedInstanceState.getInt(DbAdapter.KEY_LONGITUDE)
+						)
+				);
+		mapController.setZoom(savedInstanceState.getInt("zoom"));
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 	}
 }
