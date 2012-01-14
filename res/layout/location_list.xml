@@ -1,45 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    android:orientation="vertical"
-    android:id="@+id/listRoot"
-    android:baselineAligned="false">
-    <LinearLayout 
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="0dip"
-		android:layout_weight="1">
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
     
-    	<ListView android:id="@+id/android:list"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:divider="#00FFFFFF"
-			android:padding="1dp"/>
+    <ListView android:id="@+id/android:list"
+		android:layout_width="match_parent"
+		android:layout_height="0dip"
+		android:layout_weight="1"
+		android:divider="#00FFFFFF"
+		android:padding="1dp"/>
           
-    	<TextView android:id="@+id/android:empty"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:text="@string/list_empty"
- 			android:textSize="20sp"
- 			android:textStyle="bold"
-			android:shadowColor="#90909090"
-    		android:shadowDx="1.0"
-    		android:shadowDy="1.0"
-    		android:shadowRadius="1.0"/>
+    <TextView android:id="@+id/android:empty"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:text="@string/list_empty"
+ 		android:textSize="20sp"
+ 		android:textStyle="bold"
+		android:shadowColor="#90909090"
+    	android:shadowDx="1.0"
+    	android:shadowDy="1.0"
+    	android:shadowRadius="1.0"/>
   
-	</LinearLayout>
-	<LinearLayout xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-	    android:layout_height="wrap_content"
-	    android:layout_width="fill_parent"
-	    android:orientation="vertical">"
-    	<com.google.ads.AdView android:id="@+id/adViewList"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			ads:adUnitId="a14ecd38c27d213"
-			ads:adSize="BANNER"
-			ads:testDevices="TEST_EMULATOR,A79CCAB49ED571A724BB922CB21158F5"
-			ads:loadAdOnCreate="true"/>
-	</LinearLayout>
 </LinearLayout>

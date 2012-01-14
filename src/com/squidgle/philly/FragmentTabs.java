@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 /**
  * This demonstrates how you can implement switching between the tabs of a
@@ -31,26 +33,50 @@ public class FragmentTabs extends FragmentActivity implements LocationListener{
         setContentView(R.layout.fragment_tabs);
         mTabHost = (TabHost)findViewById(android.R.id.tabhost);
         mTabHost.setup();
-
+        mTabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
         mTabManager = new TabManager(this, mTabHost, R.id.realtabcontent);
-
-        mTabManager.addTab(mTabHost.newTabSpec("dashboard").setIndicator("Dashboard"),
-                DashFragment.class, null);
-//        mTabManager.addTab(mTabHost.newTabSpec("map").setIndicator("Map"),
-//                LocationMapActivity.class, null);
-//        mTabManager.addTab(mTabHost.newTabSpec("list").setIndicator("List"),
-//                LocationListActivity.class, null);
+        
+        setupTab("Dashboard", DashFrag.class);
+//	    setupTab("Map", LocationMapActivity.class);
+	    setupTab("List", ListFrag.class);
 
         if (savedInstanceState != null) {
             mTabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));
         }
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("tab", mTabHost.getCurrentTabTag());
-    }
+    
+    /**
+	 * Create the Tab with our custom view and add it to the TabHost
+	 * @param tag The String to be displayed in the tab
+	 * @param i	The intent with the Activity to launch for that tab
+	 */
+	
+	private void setupTab(final String tag, final Class<?> fragment) 
+	{
+		View tabview = createTabView(mTabHost.getContext(), tag);
+		mTabManager.addTab(mTabHost.newTabSpec(tag).setIndicator(tabview), fragment, null);
+	}
+	
+	/**
+	 * Create the inflated view for the Tab
+	 * @param context Application Context
+	 * @param text The String to be displayed in the tab
+	 * @return The inflated view for the TOab
+	 */
+	
+	private static View createTabView(final Context context, final String text) 
+	{
+		View view = LayoutInflater.from(context).inflate(R.layout.tab, null);
+		TextView tv = (TextView) view.findViewById(R.id.tabsText);
+		tv.setText(text);
+		return view;
+	}
+	
+	 @Override
+	    protected void onSaveInstanceState(Bundle outState) {
+	        super.onSaveInstanceState(outState);
+	        outState.putString("tab", mTabHost.getCurrentTabTag());
+	    }
 
     /**
      * This is a helper class that implements a generic mechanism for

@@ -33,15 +33,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class DashFragment extends Fragment implements LocationListener
+public class DashFrag extends Fragment implements LocationListener
 {
 	public static final String TAG = "Squidgle-Philly";
 	public static final String REFRESH_IN_PROGRESS = "refreshInProgress";
@@ -59,9 +56,9 @@ public class DashFragment extends Fragment implements LocationListener
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		getPrefs();
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -69,14 +66,6 @@ public class DashFragment extends Fragment implements LocationListener
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dashboard, container, false);
 		dashButtonListeners(v);
-		//check if GPS service is enabled
-        if(!mDisableGPSWarning) {
-        	checkGPS();
-        }
-        
-        if(mInitialLaunch) {
-        	getActivity().showDialog(INITIAL_DIALOG);
-        }
 		return v;
 	}
 	
@@ -85,6 +74,14 @@ public class DashFragment extends Fragment implements LocationListener
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		//check if GPS service is enabled
+        if(!mDisableGPSWarning) {
+        	checkGPS();
+        }
+        
+        if(mInitialLaunch) {
+        	getActivity().showDialog(INITIAL_DIALOG);
+        }
 		restoreTask(savedInstanceState);
 	}
 
