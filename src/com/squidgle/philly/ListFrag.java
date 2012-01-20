@@ -27,7 +27,7 @@ public class ListFrag extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.location_list, container, false);
+		View v = inflater.inflate(R.layout.list, container, false);
 		return v;
 	}
 
@@ -96,7 +96,7 @@ public class ListFrag extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		super.onListItemClick(l, v, position, id);
-		Intent i = new Intent(getActivity(), LocationMapActivity.class);
+		Intent i = new Intent(getActivity(), MyMapActivity.class);
 		Long rowId = id;
 		i.putExtra(DbAdapter.KEY_ROWID, rowId);
 		startActivity(i);

@@ -29,7 +29,7 @@ public class LocationAdapter extends CursorAdapter
 	@Override
 	public View newView(Context context, Cursor c, ViewGroup parent) 
 	{
-		View v = mLayoutInflater.inflate(R.layout.location_list_row, parent, false);
+		View v = mLayoutInflater.inflate(R.layout.list_row, parent, false);
 		return v;
 	}
 

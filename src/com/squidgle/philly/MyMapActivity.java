@@ -20,7 +20,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class LocationMapActivity extends MapActivity 
+public class MyMapActivity extends MapActivity 
 {
 	static final int PHILLY_LAT = 39952450;
 	static final int PHILLY_LONG = -75163526;
@@ -36,7 +36,7 @@ public class LocationMapActivity extends MapActivity
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.location_view);
+		setContentView(R.layout.map_activity);
 		Bundle extras;
 		//grab any extras
 		if (savedInstanceState == null) {
@@ -69,7 +69,7 @@ public class LocationMapActivity extends MapActivity
 	
 	private void initMap() 
 	{
-		mMapView = (MapView) findViewById(R.id.mapView);
+		mMapView = (MapView) findViewById(R.id.mapview);
 		mMapView.setBuiltInZoomControls(true);
 		//Sets an initial zoom on City Hall
 		MapController mapController = mMapView.getController();
@@ -168,7 +168,7 @@ public class LocationMapActivity extends MapActivity
 			String title = item.getTitle();
 			String snippet = item.getSnippet();
 			
-			AlertDialog.Builder builder = new AlertDialog.Builder(LocationMapActivity.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(MyMapActivity.this);
 			builder.setMessage(snippet)
 				.setTitle(title)
 			    .setCancelable(true)

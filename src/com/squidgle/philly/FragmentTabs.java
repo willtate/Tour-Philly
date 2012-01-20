@@ -38,6 +38,7 @@ public class FragmentTabs extends FragmentActivity implements LocationListener{
         
         setupTab("Dashboard", DashFrag.class);
 //	    setupTab("Map", LocationMapActivity.class);
+        setupTab("Map", MyMapFragment.class);
 	    setupTab("List", ListFrag.class);
 
         if (savedInstanceState != null) {

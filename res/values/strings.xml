@@ -18,4 +18,7 @@
 	<!--     Error Messages -->
 	<string name="refresh_error">Failed to download update! Try again later</string>
 	<string name="json_parse_error">Failed to parse server response! Try again later</string>
+	
+	<string name="googlemaps_debug">0-uGL0vArsMNTLh18Jmxz8QTlWdpoyV_05jRCxA</string>
+	<string name="googlemaps_release">0-uGL0vArsMP5htGQtkKoMI-BfMgftw_6FAFhlw</string>
 </resources>
